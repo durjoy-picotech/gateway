@@ -12,6 +12,8 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use PragmaRX\Google2FALaravel\Facade as Google2FA;
 use Illuminate\Support\Facades\DB;
 use App\Events\SendMail;
+use Illuminate\Support\Facades\Log;
+
 class AuthController extends Controller
 {
     public function login(Request $request)
@@ -85,6 +87,7 @@ class AuthController extends Controller
                 ], 400);
             }
         } catch (JWTException $e) {
+            Log::info($e);
             return response()->json([
                 'success' => false,
                 'error' => [
