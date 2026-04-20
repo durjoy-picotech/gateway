@@ -1,0 +1,33 @@
+### Create Payment Request
+POST http://localhost:8000/api/pay/V2
+Accept: application/json
+Content-Type: application/json
+
+{
+  "version": "1.0",
+  "signType": "MD5",
+  "merchantNo": "rRPluC5rKI1kvnf8AUPU2pdtqqQlrSFiZwvLtZbZidXBlJKSFyLgBzjgFd1t",
+  "date": "2025-09-28",
+  "channleType": "CARD",
+  "sign": "dummy-signature",
+  "noticeUrl": "http://localhost:8000/notify",
+  "orderNo": "ORD123456",
+  "bizAmt": 150.75,
+  "bankCode": "BK001",
+  "accName": "John Doe",
+  "cardNo": "4111111111111111",
+  "phone": "01710000000",
+  "returnUrl": "http://localhost:8000/return",
+  "customNo": "CUST001",
+  "customName": "Demo Customer",
+  "notes": "Test transaction",
+  "cardAccountType": "SAVINGS"
+}
+
+
+GET http://localhost:8000/api/balance/V2?version=1.0&signType=MD5&merchantNo=155a87d7-edea-4a4f-9ad6-0597ce1b1e38&date=2025-09-28&channleType=CARD&sign=dummy-signature
+Content-Type: application/json
+
+{
+
+}
