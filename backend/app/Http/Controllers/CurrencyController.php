@@ -625,4 +625,7 @@ class CurrencyController extends Controller
             'data' => ['bps' => $fxRate->bps]
         ]);
     }
+
+
+
 }

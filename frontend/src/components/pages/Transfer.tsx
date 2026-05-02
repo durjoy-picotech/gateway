@@ -129,6 +129,8 @@ const TransferPage: React.FC = () => {
                     amount: Number(transferData.amount),
                     currency: transferData.currency,
                 });
+                console.log('bank_to_bank');
+
             }
 
             if (transferType === "wallet_to_walletToMySelf") {

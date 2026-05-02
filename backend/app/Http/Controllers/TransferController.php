@@ -10,6 +10,8 @@ use App\Models\User;
 use App\Models\Wallet;
 use App\Models\Currency;
 use App\Models\CurrencyFxRate;
+use Illuminate\Support\Facades\Log;
+
 
 class TransferController extends Controller
 {
@@ -307,38 +309,50 @@ class TransferController extends Controller
         }
     }
 
+
     public function convert($amount, $fromCode, $toCode)
     {
         $fromCurrency = Currency::enabled()->where('code', strtoupper($fromCode))->first();
         $toCurrency = Currency::enabled()->where('code', strtoupper($toCode))->first();
-
 
         if (!$fromCurrency || !$toCurrency) {
             throw new \Exception('Currency not found');
         }
 
         $usd = Currency::where('code', 'USD')->first();
+
+
         $applyMarkup = function ($rate, $from, $to) {
+
+
+            if ($from === $to) {
+                return $rate;
+            }
+
             $fx = CurrencyFxRate::where('from_currency', $from)
                 ->where('to_currency', $to)
                 ->first();
-            $markup = $fx ? $fx->bps / 100 : 0;
-            return $rate * (1 - $markup);
+
+
+            if (!$fx) {
+                $fx = CurrencyFxRate::where('from_currency', $to)
+                    ->where('to_currency', $from)
+                    ->first();
+            }
+            $markupPercent = $fx ? $fx->bps : 0;
+            $markupAmount = ($rate / 100) * $markupPercent;
+            return $rate - $markupAmount;
         };
 
-
         if ($fromCurrency->code !== 'USD' && $toCurrency->code !== 'USD') {
-
             // FROM -> USD
             $rate1 = $usd->exchange_rate / $fromCurrency->exchange_rate;
             $rate1 = $applyMarkup($rate1, $fromCurrency->code, 'USD');
-
             // USD -> TO
             $rate2 = $toCurrency->exchange_rate / $usd->exchange_rate;
             $rate2 = $applyMarkup($rate2, 'USD', $toCurrency->code);
             $finalRate = $rate1 * $rate2;
         } else {
-
             $baseRate = $toCurrency->exchange_rate / $fromCurrency->exchange_rate;
             $finalRate = $applyMarkup(
                 $baseRate,
@@ -346,7 +360,7 @@ class TransferController extends Controller
                 $toCurrency->code
             );
         }
-
+        log::info($amount * $finalRate);
         return $amount * $finalRate;
     }
 
@@ -518,5 +532,4 @@ class TransferController extends Controller
             // 'message' => 'Wallet transfer successful'
         ]);
     }
-    // sdfsdsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfdfsdsfdfdsfd
 }
