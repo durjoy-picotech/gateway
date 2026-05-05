@@ -256,8 +256,6 @@ class TransferController extends Controller
     }
 
 
-
-
     public function bankIndex()
     {
         try {

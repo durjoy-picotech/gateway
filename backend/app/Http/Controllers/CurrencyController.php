@@ -628,4 +628,68 @@ class CurrencyController extends Controller
 
 
 
+    // public function convert($amount, $fromCode, $toCode)
+    // {
+    //     $fromCurrency = Currency::enabled()->where('code', strtoupper($fromCode))->first();
+    //     $toCurrency = Currency::enabled()->where('code', strtoupper($toCode))->first();
+
+    //     if (!$fromCurrency || !$toCurrency) {
+    //         throw new \Exception('Currency not found');
+    //     }
+
+    //     $usd = Currency::where('code', 'USD')->first();
+
+
+    //     $applyMarkup = function ($rate, $from, $to, $type = 'minus') {
+
+    //         if ($from === $to) {
+    //             return $rate;
+    //         }
+
+    //         $fx = CurrencyFxRate::where('from_currency', $from)
+    //             ->where('to_currency', $to)
+    //             ->first();
+
+    //         if (!$fx) {
+    //             $fx = CurrencyFxRate::where('from_currency', $to)
+    //                 ->where('to_currency', $from)
+    //                 ->first();
+    //         }
+
+    //         $markupPercent = $fx ? $fx->bps : 0;
+    //         $markupAmount = ($rate / 100) * $markupPercent;
+
+    //         if ($type === 'plus') {
+    //             return $rate + $markupAmount;
+    //         }
+
+    //         return $rate - $markupAmount;
+    //     };
+
+    //     if ($fromCurrency->code !== 'USD' && $toCurrency->code !== 'USD') {
+
+    //         // Step 1: FROM → USD (PLUS)
+    //         $rate1 = $usd->exchange_rate / $fromCurrency->exchange_rate;
+    //         $rate1 = $applyMarkup($rate1, $fromCurrency->code, 'USD', 'plus');
+
+    //         // Step 2: USD → TO (MINUS)
+    //         $rate2 = $toCurrency->exchange_rate / $usd->exchange_rate;
+    //         $rate2 = $applyMarkup($rate2, 'USD', $toCurrency->code, 'minus');
+
+    //         $finalRate = $rate1 * $rate2;
+    //     } else {
+
+    //         // USD involved → always MINUS
+    //         $baseRate = $toCurrency->exchange_rate / $fromCurrency->exchange_rate;
+
+    //         $finalRate = $applyMarkup(
+    //             $baseRate,
+    //             $fromCurrency->code,
+    //             $toCurrency->code,
+    //             'minus'
+    //         );
+    //     }
+    //     log::info($amount * $finalRate);
+    //     return $amount * $finalRate;
+    // }
 }
