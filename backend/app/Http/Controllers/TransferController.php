@@ -320,8 +320,7 @@ class TransferController extends Controller
         $usd = Currency::where('code', 'USD')->first();
 
 
-        $applyMarkup = function ($rate, $from, $to) {
-
+        $applyMarkup = function ($rate, $from, $to, $type = 'mainash') {
 
             if ($from === $to) {
                 return $rate;
@@ -331,24 +330,30 @@ class TransferController extends Controller
                 ->where('to_currency', $to)
                 ->first();
 
-
             if (!$fx) {
                 $fx = CurrencyFxRate::where('from_currency', $to)
                     ->where('to_currency', $from)
                     ->first();
             }
+
             $markupPercent = $fx ? $fx->bps : 0;
             $markupAmount = ($rate / 100) * $markupPercent;
+
+            if ($type === 'add') {
+                return $rate + $markupAmount;
+            }
+
             return $rate - $markupAmount;
         };
 
         if ($fromCurrency->code !== 'USD' && $toCurrency->code !== 'USD') {
-            // FROM -> USD
+
             $rate1 = $usd->exchange_rate / $fromCurrency->exchange_rate;
-            $rate1 = $applyMarkup($rate1, $fromCurrency->code, 'USD');
-            // USD -> TO
+            $rate1 = $applyMarkup($rate1, $fromCurrency->code, 'USD', 'add');
+
             $rate2 = $toCurrency->exchange_rate / $usd->exchange_rate;
-            $rate2 = $applyMarkup($rate2, 'USD', $toCurrency->code);
+            $rate2 = $applyMarkup($rate2, 'USD', $toCurrency->code, 'mainash');
+
             $finalRate = $rate1 * $rate2;
         } else {
             $baseRate = $toCurrency->exchange_rate / $fromCurrency->exchange_rate;
