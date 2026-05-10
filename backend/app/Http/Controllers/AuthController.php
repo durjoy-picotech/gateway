@@ -102,7 +102,7 @@ class AuthController extends Controller
 
         // Handle 2FA
         if ($user->two_factor_enabled == 1) {
-            if(!$request->otp){
+            if (!$request->otp) {
                 return response()->json([
                     'success' => true,
                     'data' => [
@@ -363,4 +363,82 @@ class AuthController extends Controller
             'message' => 'Account deleted successfully'
         ]);
     }
+
+
+
+
+
+
+
+
+
+    //   public function convert($amount, $fromCode, $toCode)
+    // {
+    //     $fromCurrency = Currency::enabled()
+    //         ->where('code', strtoupper($fromCode))
+    //         ->first();
+
+    //     $toCurrency = Currency::enabled()
+    //         ->where('code', strtoupper($toCode))
+    //         ->first();
+
+    //     if (!$fromCurrency || !$toCurrency) {
+    //         throw new \Exception('Currency not found');
+    //     }
+
+    //     $applyMarkup = function ($rate, $from, $to, $type = 'add') {
+
+    //         if ($from === $to) {
+    //             return $rate;
+    //         }
+
+    //         $fx = CurrencyFxRate::where('from_currency', $from)
+    //             ->where('to_currency', $to)
+    //             ->first();
+
+    //         if (!$fx) {
+    //             $fx = CurrencyFxRate::where('from_currency', $to)
+    //                 ->where('to_currency', $from)
+    //                 ->first();
+    //         }
+
+    //         $markupPercent = $fx ? $fx->bps : 0;
+
+    //         $markupAmount = ($rate / 100) * $markupPercent;
+
+    //         if ($type === 'add') {
+    //             return $rate + $markupAmount;
+    //         }
+
+    //         return $rate - $markupAmount;
+    //     };
+
+
+    //     $fromRateWithMarkup = $applyMarkup(
+    //         $fromCurrency->exchange_rate,
+    //         $fromCurrency->code,
+    //         'USD',
+    //         'add'
+    //     );
+
+
+    //     $usdRate = 1 / $fromRateWithMarkup;
+    //     $usdAmount = $amount * $usdRate;
+
+    //     $toRateWithMarkup = $applyMarkup(
+    //         $toCurrency->exchange_rate,
+    //         'USD',
+    //         $toCurrency->code,
+    //         'minus'
+    //     );
+    //     $finalAmount = $usdAmount * $toRateWithMarkup;
+
+    //     Log::info([
+    //         'usd_amount' => $usdAmount,
+    //         'final_amount' => $finalAmount,
+    //     ]);
+
+    //     return $finalAmount;
+    // }
+
 }

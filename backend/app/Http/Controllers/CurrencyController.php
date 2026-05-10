@@ -626,18 +626,21 @@ class CurrencyController extends Controller
         ]);
     }
 
-
-
     // public function convert($amount, $fromCode, $toCode)
     // {
-    //     $from = Currency::enabled()->where('code', strtoupper($fromCode))->first();
-    //     $to = Currency::enabled()->where('code', strtoupper($toCode))->first();
+    //     $fromCurrency = Currency::enabled()
+    //         ->where('code', strtoupper($fromCode))
+    //         ->first();
 
-    //     if (!$from || !$to) {
+    //     $toCurrency = Currency::enabled()
+    //         ->where('code', strtoupper($toCode))
+    //         ->first();
+
+    //     if (!$fromCurrency || !$toCurrency) {
     //         throw new \Exception('Currency not found');
     //     }
 
-    //     $applyMarkup = function ($rate, $from, $to) {
+    //     $applyMarkup = function ($rate, $from, $to, $type = 'add') {
 
     //         if ($from === $to) {
     //             return $rate;
@@ -651,39 +654,65 @@ class CurrencyController extends Controller
     //             $fx = CurrencyFxRate::where('from_currency', $to)
     //                 ->where('to_currency', $from)
     //                 ->first();
-
-    //             // reverse হলে invert করে নাও
-    //             if ($fx) {
-    //                 $rate = 1 / $rate;
-    //             }
     //         }
 
-    //         $markup = $fx ? $fx->bps : 0;
+    //         $markupPercent = $fx ? $fx->bps : 0;
 
-    //         return $rate - ($rate * $markup / 100);
+    //         $markupAmount = ($rate / 100) * $markupPercent;
+
+    //         if ($type === 'add') {
+    //             return $rate + $markupAmount;
+    //         }
+
+    //         return $rate - $markupAmount;
     //     };
 
-    //     // STEP 1: convert FROM -> USD
-    //     $usdRateFrom = $applyMarkup(
-    //         1 / $from->exchange_rate,
-    //         $from->code,
-    //         'USD'
-    //     );
+    //     /*
+    // |--------------------------------------------------------------------------
+    // | FROM RATE + MARKUP
+    // |--------------------------------------------------------------------------
+    // */
 
-    //     $amountInUsd = $amount * $usdRateFrom;
+    //     // Example:
+    //     // 125.45 + 4% = 130.468
 
-    //     // STEP 2: USD -> TO
-    //     $usdRateTo = $applyMarkup(
-    //         $to->exchange_rate,
+    //     $fromRate = $applyMarkup(
+    //         $fromCurrency->exchange_rate,
+    //         $fromCurrency->code,
     //         'USD',
-    //         $to->code
+    //         'add'
     //     );
 
-    //     $finalAmount = $amountInUsd * $usdRateTo;
+    //     /*
+    // |--------------------------------------------------------------------------
+    // | TO RATE - MARKUP
+    // |--------------------------------------------------------------------------
+    // */
 
-    //     \Log::info('Converted:', [
-    //         'amount' => $amount,
-    //         'result' => $finalAmount
+    //     // Example:
+    //     // 82.52 - 10% = 74.268
+
+    //     $toRate = $applyMarkup(
+    //         $toCurrency->exchange_rate,
+    //         'USD',
+    //         $toCurrency->code,
+    //         'minus'
+    //     );
+
+    //     /*
+    // |--------------------------------------------------------------------------
+    // | FINAL CALCULATION
+    // |--------------------------------------------------------------------------
+    // */
+
+    //     // (9540 / 130.468) * 74.268
+
+    //     $finalAmount = ($amount / $fromRate) * $toRate;
+
+    //     Log::info([
+    //         'from_rate'   => $fromRate,
+    //         'to_rate'     => $toRate,
+    //         'finalAmount' => $finalAmount,
     //     ]);
 
     //     return $finalAmount;
@@ -691,33 +720,23 @@ class CurrencyController extends Controller
 
 
 
-    //  if ($fromCurrency->code !== 'USD' && $toCurrency->code !== 'USD') {
 
 
-    //     $rate1 = $usd->exchange_rate / $fromCurrency->exchange_rate;
-
-    //     $markup1 = CurrencyFxRate::getMarkup($fromCurrency->code, 'USD');
-    //     $rate1 = $rate1 + ($rate1 * $markup1 / 100);
 
 
-    //     $rate2 = $toCurrency->exchange_rate / $usd->exchange_rate;
-
-    //     $markup2 = CurrencyFxRate::getMarkup('USD', $toCurrency->code);
-    //     $rate2 = $rate2 - ($rate2 * $markup2 / 100);
 
 
-    //     $finalRate = $rate1 * $rate2;
-    // } else {
 
-    //     $baseRate = $toCurrency->exchange_rate / $fromCurrency->exchange_rate;
 
-    //     $markup = CurrencyFxRate::getMarkup(
+
+    // elseif ($toCurrency->code === 'USD') {
+
+    //         $baseRate = $amount / $fromCurrency->exchange_rate;
+    //     }
+
+    //     $finalRate = $applyMarkup(
+    //         $baseRate,
     //         $fromCurrency->code,
     //         $toCurrency->code
     //     );
-
-    //     $finalRate = $baseRate - ($baseRate * $markup / 100);
-    // dddddddddddddddddddddddddddddddddddddddddddddddd
-    // }
-
 }

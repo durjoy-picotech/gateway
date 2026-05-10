@@ -348,23 +348,47 @@ class TransferController extends Controller
 
         if ($fromCurrency->code !== 'USD' && $toCurrency->code !== 'USD') {
 
-            $rate1 = $usd->exchange_rate / $fromCurrency->exchange_rate;
-            $rate1 = $applyMarkup($rate1, $fromCurrency->code, 'USD', 'add');
+            $fromRate = $applyMarkup(
+                $fromCurrency->exchange_rate,
+                $fromCurrency->code,
+                'USD',
+                'add'
+            );
 
-            $rate2 = $toCurrency->exchange_rate / $usd->exchange_rate;
-            $rate2 = $applyMarkup($rate2, 'USD', $toCurrency->code, 'mainash');
+            $toRate = $applyMarkup(
+                $toCurrency->exchange_rate,
+                'USD',
+                $toCurrency->code,
+                'mainash'
+            );
 
-            $finalRate = $rate1 * $rate2;
+
+            $finalRate = ($amount / $fromRate) * $toRate;
         } else {
-            $baseRate = $toCurrency->exchange_rate / $fromCurrency->exchange_rate;
+
+            // usd->to
+            if ($fromCurrency->code === 'USD') {
+
+                $baseRate = $amount * $toCurrency->exchange_rate;
+
+                // form->usd
+            } elseif ($toCurrency->code === 'USD') {
+
+                $baseRate = $amount / $fromCurrency->exchange_rate;
+            }
+
             $finalRate = $applyMarkup(
                 $baseRate,
                 $fromCurrency->code,
                 $toCurrency->code
             );
         }
-        log::info($amount * $finalRate);
-        return $amount * $finalRate;
+
+
+
+
+        log::info($finalRate);
+        return $finalRate;
     }
 
 
@@ -535,4 +559,6 @@ class TransferController extends Controller
             // 'message' => 'Wallet transfer successful'
         ]);
     }
+
+    // ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 }
